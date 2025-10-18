@@ -24,10 +24,22 @@ class Vocoder:
             assert np.min(phase[np.isfinite(phase)]) >= -np.pi
             assert np.max(phase[np.isfinite(phase)]) <= +np.pi
 
-        else:
+        elif False:
 
             phase = dft / (np.roll(dft, shift=1, axis=0) + np.finfo(float).eps)
             phase = np.angle(phase)
+
+            assert np.min(phase) >= -np.pi
+            assert np.max(phase) <= +np.pi
+        
+        else:
+
+            def wrap(x):
+                return (x + np.pi) % (2 * np.pi) - np.pi
+
+            phase = np.angle(dft)
+            phase = np.diff(phase, axis=0, prepend=0)
+            phase = wrap(phase)
 
             assert np.min(phase) >= -np.pi
             assert np.max(phase) <= +np.pi
